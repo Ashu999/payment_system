@@ -1,0 +1,147 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "payment_system",
+    "collectionId": "47809717-7836-4f4e-8dd7-c7d9adfc4fdc",
+    "dateExported": "2024-12-22T20:24:09.037Z",
+    "version": "1.2",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "38faf299-f858-4ed2-91d8-632687811295",
+            "colId": "47809717-7836-4f4e-8dd7-c7d9adfc4fdc",
+            "containerId": "",
+            "name": "add amount",
+            "url": "http://localhost:8080/balance/add",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2024-12-22T17:09:14.336Z",
+            "modified": "2024-12-22T17:10:35.338Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"amount\" : \"222\"\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjODI4YTljYy04NGY1LTRiMzItOWZjNS1mYjRiYTA1ODJjNTAiLCJleHAiOjE3MzQ5NzMzNDV9.ImlWQvYLGMPSEw1YxqeCy8BvpZeyrE4Z3qyIHllNlro"
+            }
+        },
+        {
+            "_id": "6ae7efeb-acb4-4097-9107-2c6845994f23",
+            "colId": "47809717-7836-4f4e-8dd7-c7d9adfc4fdc",
+            "containerId": "",
+            "name": "check balance",
+            "url": "http://localhost:8080/balance",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2024-12-22T17:10:50.556Z",
+            "modified": "2024-12-22T19:41:22.887Z",
+            "headers": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5NWM5YTM5My1hM2Q3LTQ0MTAtOWQ5NS0xZmQyNGI3MTI2YjAiLCJleHAiOjE3MzQ5ODI4Njh9.ZS9wSTO1LLCSnEt8DXBcDAbmrbzYzJ_ajlfM2TbD-tM"
+            }
+        },
+        {
+            "_id": "ef03ab7c-7398-487a-af5c-30f962683784",
+            "colId": "47809717-7836-4f4e-8dd7-c7d9adfc4fdc",
+            "containerId": "",
+            "name": "register user",
+            "url": "http://localhost:8080/user/register",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2024-12-22T17:14:39.764Z",
+            "modified": "2024-12-22T20:06:14.770Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\"email\":\"user1@example.com\",\"password\":\"password123\"}",
+                "form": []
+            }
+        },
+        {
+            "_id": "b16abdf3-e9aa-4f3e-a7ef-ac543a5dd5c9",
+            "colId": "47809717-7836-4f4e-8dd7-c7d9adfc4fdc",
+            "containerId": "",
+            "name": "get user info",
+            "url": "http://localhost:8080/user",
+            "method": "GET",
+            "sortNum": 40000,
+            "created": "2024-12-22T17:15:42.589Z",
+            "modified": "2024-12-22T19:41:32.006Z",
+            "headers": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5NWM5YTM5My1hM2Q3LTQ0MTAtOWQ5NS0xZmQyNGI3MTI2YjAiLCJleHAiOjE3MzQ5ODI4Njh9.ZS9wSTO1LLCSnEt8DXBcDAbmrbzYzJ_ajlfM2TbD-tM"
+            }
+        },
+        {
+            "_id": "e3514ac5-595a-47b4-a979-de11037fa602",
+            "colId": "47809717-7836-4f4e-8dd7-c7d9adfc4fdc",
+            "containerId": "",
+            "name": "login user",
+            "url": "http://localhost:8080/user/login",
+            "method": "POST",
+            "sortNum": 50000,
+            "created": "2024-12-22T17:17:57.556Z",
+            "modified": "2024-12-22T19:41:08.782Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\"email\":\"user1@example.com\",\"password\":\"password123\"}",
+                "form": []
+            }
+        },
+        {
+            "_id": "843683b2-18ab-43c7-bcd5-4a4e8c95423c",
+            "colId": "47809717-7836-4f4e-8dd7-c7d9adfc4fdc",
+            "containerId": "",
+            "name": "health",
+            "url": "http://localhost:8080/",
+            "method": "GET",
+            "sortNum": 60000,
+            "created": "2024-12-22T17:18:34.990Z",
+            "modified": "2024-12-22T17:18:47.999Z",
+            "headers": []
+        },
+        {
+            "_id": "1ebdfc2e-bbaa-468a-b0f6-b71e4ca90838",
+            "colId": "47809717-7836-4f4e-8dd7-c7d9adfc4fdc",
+            "containerId": "",
+            "name": "get transactions",
+            "url": "http://localhost:8080/transactions",
+            "method": "GET",
+            "sortNum": 70000,
+            "created": "2024-12-22T17:29:35.520Z",
+            "modified": "2024-12-22T17:33:12.832Z",
+            "headers": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjODI4YTljYy04NGY1LTRiMzItOWZjNS1mYjRiYTA1ODJjNTAiLCJleHAiOjE3MzQ5NzQyOTV9.57UIEk4ZE5icfYLXUV8aXMj5wNTN7zJA5_1sf5_2WwA"
+            }
+        },
+        {
+            "_id": "5aac9a34-1e7d-4252-aecd-f61875529603",
+            "colId": "47809717-7836-4f4e-8dd7-c7d9adfc4fdc",
+            "containerId": "",
+            "name": "send money",
+            "url": "http://localhost:8080/transaction/send",
+            "method": "POST",
+            "sortNum": 80000,
+            "created": "2024-12-22T18:04:54.262Z",
+            "modified": "2024-12-22T18:40:27.919Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"amount\" : \"2\",\n  \"email\" : \"user3@example.com\"\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjODI4YTljYy04NGY1LTRiMzItOWZjNS1mYjRiYTA1ODJjNTAiLCJleHAiOjE3MzQ5Nzc4MzR9.pwn58Np7Me0h-cBNc6Eyy4csN4pH5GkzRu2YFvnvh3A"
+            }
+        }
+    ],
+    "ref": "2XyLqs3q8C178f19VSGQWHr236FNwm3RdImsreXVesXmA8l3pv2m2uRP65CuKxdM7eqG2SX6n4stASjfs0M9kQ"
+}

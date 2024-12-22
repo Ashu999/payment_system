@@ -1,0 +1,236 @@
+{
+    "info": {
+        "_postman_id": "570325a4-efcb-4f53-b4e0-083710631bbe",
+        "name": "payment_system",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "description": ""
+    },
+    "item": [
+        {
+            "name": "add amount",
+            "request": {
+                "method": "POST",
+                "url": {
+                    "raw": "http://localhost:8080/balance/add",
+                    "path": [
+                        "balance",
+                        "add"
+                    ],
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080"
+                },
+                "body": {
+                    "mode": "raw",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    },
+                    "raw": "{\n  \"amount\" : \"222\"\n}"
+                },
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjODI4YTljYy04NGY1LTRiMzItOWZjNS1mYjRiYTA1ODJjNTAiLCJleHAiOjE3MzQ5NzMzNDV9.ImlWQvYLGMPSEw1YxqeCy8BvpZeyrE4Z3qyIHllNlro",
+                            "type": "string"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "check balance",
+            "request": {
+                "method": "GET",
+                "url": {
+                    "raw": "http://localhost:8080/balance",
+                    "path": [
+                        "balance"
+                    ],
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080"
+                },
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5NWM5YTM5My1hM2Q3LTQ0MTAtOWQ5NS0xZmQyNGI3MTI2YjAiLCJleHAiOjE3MzQ5ODI4Njh9.ZS9wSTO1LLCSnEt8DXBcDAbmrbzYzJ_ajlfM2TbD-tM",
+                            "type": "string"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "register user",
+            "request": {
+                "method": "POST",
+                "url": {
+                    "raw": "http://localhost:8080/user/register",
+                    "path": [
+                        "user",
+                        "register"
+                    ],
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080"
+                },
+                "body": {
+                    "mode": "raw",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    },
+                    "raw": "{\"email\":\"user1@example.com\",\"password\":\"password123\"}"
+                }
+            }
+        },
+        {
+            "name": "get user info",
+            "request": {
+                "method": "GET",
+                "url": {
+                    "raw": "http://localhost:8080/user",
+                    "path": [
+                        "user"
+                    ],
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080"
+                },
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5NWM5YTM5My1hM2Q3LTQ0MTAtOWQ5NS0xZmQyNGI3MTI2YjAiLCJleHAiOjE3MzQ5ODI4Njh9.ZS9wSTO1LLCSnEt8DXBcDAbmrbzYzJ_ajlfM2TbD-tM",
+                            "type": "string"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "login user",
+            "request": {
+                "method": "POST",
+                "url": {
+                    "raw": "http://localhost:8080/user/login",
+                    "path": [
+                        "user",
+                        "login"
+                    ],
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080"
+                },
+                "body": {
+                    "mode": "raw",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    },
+                    "raw": "{\"email\":\"user1@example.com\",\"password\":\"password123\"}"
+                }
+            }
+        },
+        {
+            "name": "health",
+            "request": {
+                "method": "GET",
+                "url": {
+                    "raw": "http://localhost:8080/",
+                    "path": [
+                        ""
+                    ],
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080"
+                }
+            }
+        },
+        {
+            "name": "get transactions",
+            "request": {
+                "method": "GET",
+                "url": {
+                    "raw": "http://localhost:8080/transactions",
+                    "path": [
+                        "transactions"
+                    ],
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080"
+                },
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjODI4YTljYy04NGY1LTRiMzItOWZjNS1mYjRiYTA1ODJjNTAiLCJleHAiOjE3MzQ5NzQyOTV9.57UIEk4ZE5icfYLXUV8aXMj5wNTN7zJA5_1sf5_2WwA",
+                            "type": "string"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "send money",
+            "request": {
+                "method": "POST",
+                "url": {
+                    "raw": "http://localhost:8080/transaction/send",
+                    "path": [
+                        "transaction",
+                        "send"
+                    ],
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080"
+                },
+                "body": {
+                    "mode": "raw",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    },
+                    "raw": "{\n  \"amount\" : \"2\",\n  \"email\" : \"user3@example.com\"\n}"
+                },
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjODI4YTljYy04NGY1LTRiMzItOWZjNS1mYjRiYTA1ODJjNTAiLCJleHAiOjE3MzQ5Nzc4MzR9.pwn58Np7Me0h-cBNc6Eyy4csN4pH5GkzRu2YFvnvh3A",
+                            "type": "string"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
