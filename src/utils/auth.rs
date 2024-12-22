@@ -1,3 +1,4 @@
+use actix_web::HttpRequest;
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
 use std::env;
@@ -42,4 +43,13 @@ pub fn extract_token(auth_header: Option<&actix_web::http::header::HeaderValue>)
         .ok()?
         .strip_prefix("Bearer ")
         .map(String::from)
+}
+
+pub fn verify_request_token(req: &HttpRequest) -> Result<Claims, &'static str> {
+    // Extract bearer token
+    let auth_header = req.headers().get("Authorization");
+    let token = extract_token(auth_header).ok_or("Invalid authorization header")?;
+
+    // Verify JWT
+    verify_token(&token).map_err(|_| "Invalid token")
 }

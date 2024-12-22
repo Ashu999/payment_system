@@ -1,4 +1,5 @@
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+use env_logger::Env;
 use routes::user::{get_user, login, register};
 use sqlx::postgres::PgPoolOptions;
 use std::env;
@@ -14,6 +15,9 @@ async fn hello() -> impl Responder {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
+
+    // Initialize logger
+    env_logger::init_from_env(Env::default().default_filter_or("info"));
 
     // Create connection pool
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");

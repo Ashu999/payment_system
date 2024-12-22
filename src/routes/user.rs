@@ -1,4 +1,4 @@
-use crate::utils::token::{self};
+use crate::utils::auth::{self};
 use actix_web::{get, post, web, HttpResponse, Responder};
 use bcrypt::{hash, verify, DEFAULT_COST};
 use rust_decimal::Decimal;
@@ -79,7 +79,7 @@ pub async fn login(
             // Verify password
             if verify(&credentials.password, &user.password_hash).unwrap_or(false) {
                 // Generate JWT
-                let token = match token::create_token(user.id) {
+                let token = match auth::create_token(user.id) {
                     Ok(token) => token,
                     Err(_) => {
                         return HttpResponse::InternalServerError().json("Failed to create token")
@@ -100,18 +100,10 @@ pub async fn get_user(
     req: actix_web::HttpRequest,
     pool: web::Data<sqlx::PgPool>,
 ) -> impl Responder {
-    // Extract and verify bearer token
-    let auth_header = req.headers().get("Authorization");
-
-    let token = match token::extract_token(auth_header) {
-        Some(token) => token,
-        None => return HttpResponse::Unauthorized().json("Invalid authorization header"),
-    };
-
-    // Verify JWT
-    let claims = match token::verify_token(&token) {
+    // Verify token and get claims
+    let claims = match auth::verify_request_token(&req) {
         Ok(claims) => claims,
-        Err(_) => return HttpResponse::Unauthorized().json("Invalid token"),
+        Err(msg) => return HttpResponse::Unauthorized().json(msg),
     };
 
     let user = sqlx::query!(
