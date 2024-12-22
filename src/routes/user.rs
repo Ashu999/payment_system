@@ -18,7 +18,6 @@ pub struct AuthResponse {
 
 #[derive(Serialize)]
 pub struct UserResponse {
-    pub id: Uuid,
     pub email: String,
     pub balance: Decimal,
 }
@@ -115,7 +114,6 @@ pub async fn get_user(
 
     match user {
         Ok(Some(user)) => HttpResponse::Ok().json(UserResponse {
-            id: user.id,
             email: user.email,
             balance: user.balance,
         }),

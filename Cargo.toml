@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-actix-web = "4.4"
+actix-web = { version = "4.3.1", features = ["macros"] }
 sqlx = { version = "0.8.2", features = [
     "runtime-tokio-rustls",
     "postgres",
@@ -12,14 +12,15 @@ sqlx = { version = "0.8.2", features = [
     "time",
     "rust_decimal",
 ] }
-tokio = { version = "1.0", features = ["full"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 uuid = { version = "1.0", features = ["serde", "v4"] }
 dotenv = "0.15"
 rust_decimal = "1.32"
-time = "0.3"
+time = { version = "0.3", features = ["serde"] }
 jsonwebtoken = "9.2"
 bcrypt = "0.16.0"
-chrono = "0.4"
+chrono = { version = "0.4", features = ["serde"] }
 env_logger = "0.11.6"
+actix-governor = "0.8.0"
+actix-web-httpauth = "0.8"
