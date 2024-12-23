@@ -3,6 +3,7 @@
 Technologies Used: Rust, Actix, PostgreSQL, Sqlx, JWT, Docker  
 
 API Testing (Import collection, also contains input examples): [Postman (free)](./docs/postman-collection-payment_system.json) or [Thunder Client (not free)](./docs/thunder-client-collection_payment_system.json)
+Also Checkout: [API Documentation](./docs/openapi.yaml)
 
 Dev Setup:
 ```shell
