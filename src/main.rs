@@ -2,6 +2,7 @@ use actix_governor::{Governor, GovernorConfigBuilder};
 use actix_web::{get, middleware, web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
 use routes::balance::{add_amount, get_balance};
+use routes::health::health;
 use routes::transactions::{get_transactions, send_transaction};
 use routes::user::{get_user, login, register};
 use sqlx::postgres::PgPoolOptions;
@@ -9,11 +10,6 @@ use std::env;
 
 mod routes;
 mod utils;
-
-#[get("/")]
-async fn health() -> impl Responder {
-    HttpResponse::Ok().body("Welcome to the payment system API!")
-}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
