@@ -2,7 +2,7 @@
 
 Technologies Used: Rust, Actix, PostgreSQL, Sqlx, JWT, Docker  
 
-##### Dev Setup:
+## Dev Setup:
 ```shell
 git clone https://github.com/Ashu999/payment_system.git
 cd payment_system
@@ -16,7 +16,7 @@ sqlx migrate run                # apply mirgation
 cargo run                       # run app locally (OR with watch mode: `cargo watch -x run`)
 ```
 
-##### Docker Setup:
+## Docker Setup:
 ```shell
 git clone https://github.com/Ashu999/payment_system.git
 cd payment_system
@@ -24,12 +24,12 @@ cd payment_system
 docker-compose up --build
 ```
 
-#### API Testing:
-Import one of the collection from below (also contains input examples):
-[Postman Collection (free)](./docs/postman-collection-payment_system.json) or [Thunder Client (not free)](./docs/thunder-client-collection_payment_system.json)
-Also Checkout: [API Documentation](./docs/openapi.yaml)
+## API Testing:
+Import one of the collection (also contains input examples):
+[Postman Collection (free)](./docs/postman-collection-payment_system.json) OR [Thunder Client (not free)](./docs/thunder-client-collection_payment_system.json)
 
-##### This Project includes:
+
+## This Project includes:
 - User APIs
 - Transaction APIs
 - Balance APIs
@@ -41,3 +41,4 @@ Also Checkout: [API Documentation](./docs/openapi.yaml)
 - Health check
 - Dockerization
 - async/await
+- security middleware
