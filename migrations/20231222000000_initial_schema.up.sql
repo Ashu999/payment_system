@@ -6,6 +6,8 @@ CREATE TABLE users (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE INDEX idx_users_email ON users(email);
+
 -- ENUM types for transaction types and status
 CREATE TYPE transaction_type AS ENUM ('SENT', 'RECEIVED');
 CREATE TYPE transaction_status AS ENUM ('SUCCESS', 'FAILURE');
