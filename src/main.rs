@@ -1,5 +1,5 @@
 use actix_governor::{Governor, GovernorConfigBuilder};
-use actix_web::{get, middleware, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{middleware, web, App, HttpServer};
 use env_logger::Env;
 use routes::balance::{add_amount, get_balance};
 use routes::health::health;
@@ -47,8 +47,8 @@ async fn main() -> std::io::Result<()> {
             // Add security middleware
             .wrap(Governor::new(&governor_conf))
             .wrap(middleware::Compress::default())
-            // Enable max body size of 4mb
-            .app_data(web::JsonConfig::default().limit(4194304))
+            // Enable max body size of ~1mb
+            .app_data(web::JsonConfig::default().limit(1000000))
             .service(health)
             .service(register)
             .service(login)
