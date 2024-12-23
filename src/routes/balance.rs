@@ -1,5 +1,8 @@
-use crate::utils::auth;
-use actix_web::{get, post, web, HttpResponse, Responder};
+use crate::utils::{
+    auth,
+    response::{json_response, ApiResponse, MessageData},
+};
+use actix_web::{get, post, web, Responder};
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use sqlx::types::Uuid;
@@ -22,7 +25,7 @@ pub async fn get_balance(
     // Verify token and get claims
     let claims = match auth::verify_request_token(&req) {
         Ok(claims) => claims,
-        Err(msg) => return HttpResponse::Unauthorized().json(msg),
+        Err(msg) => return json_response(ApiResponse::<MessageData>::error(401, msg.to_string())),
     };
 
     let user = sqlx::query!("SELECT balance FROM users WHERE id = $1", claims.sub)
@@ -30,10 +33,13 @@ pub async fn get_balance(
         .await;
 
     match user {
-        Ok(Some(user)) => HttpResponse::Ok().json(BalanceResponse {
+        Ok(Some(user)) => json_response(ApiResponse::success(BalanceResponse {
             balance: user.balance,
-        }),
-        _ => HttpResponse::NotFound().json("User not found"),
+        })),
+        _ => json_response(ApiResponse::<MessageData>::error(
+            404,
+            "User not found".to_string(),
+        )),
     }
 }
 
@@ -46,12 +52,15 @@ pub async fn add_amount(
     // Verify token and get claims
     let claims = match auth::verify_request_token(&req) {
         Ok(claims) => claims,
-        Err(msg) => return HttpResponse::Unauthorized().json(msg),
+        Err(msg) => return json_response(ApiResponse::<MessageData>::error(401, msg.to_string())),
     };
 
     // Validate amount is positive
     if add_request.amount <= Decimal::new(0, 0) {
-        return HttpResponse::BadRequest().json("Amount must be positive");
+        return json_response(ApiResponse::<MessageData>::error(
+            400,
+            "Amount must be positive".to_string(),
+        ));
     }
 
     // Update balance and create transaction record in a transaction
@@ -75,9 +84,12 @@ pub async fn add_amount(
     .await;
 
     match result {
-        Ok(record) => HttpResponse::Ok().json(BalanceResponse {
+        Ok(record) => json_response(ApiResponse::success(BalanceResponse {
             balance: record.balance.unwrap_or_default(),
-        }),
-        Err(_) => HttpResponse::InternalServerError().json("Failed to update balance"),
+        })),
+        Err(_) => json_response(ApiResponse::<MessageData>::error(
+            500,
+            "Failed to update balance".to_string(),
+        )),
     }
 }
