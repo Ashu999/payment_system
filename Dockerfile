@@ -11,7 +11,7 @@ FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y libpq5 ca-certificates && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /usr/src/app/target/release/payment-system /usr/local/bin/app
+COPY --from=builder /usr/src/app/target/release/payment_system /usr/local/bin/app
 COPY --from=builder /usr/src/app/migrations /usr/local/bin/migrations
 
 WORKDIR /usr/local/bin

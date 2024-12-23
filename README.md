@@ -25,9 +25,10 @@ docker-compose up --build
 ```
 
 ## API Testing:
-Import one of the collection (also contains input examples):
-[Postman Collection (free)](./docs/postman-collection-payment_system.json) OR [Thunder Client (not free)](./docs/thunder-client-collection_payment_system.json)
+Import one of the collections (also contains input examples):
+[Postman Collection (free)](./docs/postman-collection-payment_system.json) or [Thunder Client (not free)](./docs/thunder-client-collection_payment_system.json)
 
+Also Checkout: [API Documentation](./docs/openapi.yaml)
 
 ## This Project includes:
 - User APIs
