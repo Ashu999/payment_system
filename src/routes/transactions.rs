@@ -1,5 +1,8 @@
-use crate::utils::auth;
-use actix_web::{get, post, web, HttpResponse, Responder};
+use crate::utils::{
+    auth,
+    response::{json_response, ApiResponse, MessageData},
+};
+use actix_web::{get, post, web, Responder};
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -34,7 +37,7 @@ pub async fn get_transactions(
     // Verify token and get claims
     let claims = match auth::verify_request_token(&req) {
         Ok(claims) => claims,
-        Err(msg) => return HttpResponse::Unauthorized().json(msg),
+        Err(msg) => return json_response(ApiResponse::<MessageData>::error(401, msg.to_string())),
     };
 
     // Fetch transactions for the user
@@ -56,8 +59,11 @@ pub async fn get_transactions(
     .await;
 
     match transactions {
-        Ok(transactions) => HttpResponse::Ok().json(transactions),
-        Err(_) => HttpResponse::InternalServerError().json("Failed to fetch transactions"),
+        Ok(transactions) => json_response(ApiResponse::success(transactions)),
+        Err(_) => json_response(ApiResponse::<MessageData>::error(
+            500,
+            "Failed to fetch transactions".to_string(),
+        )),
     }
 }
 
@@ -70,23 +76,28 @@ pub async fn send_transaction(
     // Verify token and get claims
     let claims = match auth::verify_request_token(&req) {
         Ok(claims) => claims,
-        Err(msg) => return HttpResponse::Unauthorized().json(msg),
+        Err(msg) => return json_response(ApiResponse::<MessageData>::error(401, msg.to_string())),
     };
 
     // Validate amount is positive
     if send_request.amount <= Decimal::new(0, 0) {
-        return HttpResponse::BadRequest().json(SendTransactionResponse {
+        return json_response(ApiResponse::success(SendTransactionResponse {
             amount: send_request.amount,
             receiver_email: send_request.email.clone(),
             balance: Decimal::new(0, 0),
             message: "Amount must be positive".to_string(),
-        });
+        }));
     }
 
     // Start a transaction
     let mut tx = match pool.begin().await {
         Ok(tx) => tx,
-        Err(_) => return HttpResponse::InternalServerError().json("Failed to start transaction"),
+        Err(_) => {
+            return json_response(ApiResponse::<MessageData>::error(
+                500,
+                "Failed to start transaction".to_string(),
+            ))
+        }
     };
 
     // Get sender's current balance
@@ -98,18 +109,28 @@ pub async fn send_transaction(
     .await
     {
         Ok(Some(user)) => user,
-        Ok(None) => return HttpResponse::NotFound().json("Sender not found"),
-        Err(_) => return HttpResponse::InternalServerError().json("Database error"),
+        Ok(None) => {
+            return json_response(ApiResponse::<MessageData>::error(
+                404,
+                "Sender not found".to_string(),
+            ))
+        }
+        Err(_) => {
+            return json_response(ApiResponse::<MessageData>::error(
+                500,
+                "Database error".to_string(),
+            ))
+        }
     };
 
     // Check if sender has sufficient balance
     if sender.balance < send_request.amount {
-        return HttpResponse::BadRequest().json(SendTransactionResponse {
+        return json_response(ApiResponse::success(SendTransactionResponse {
             amount: send_request.amount,
             receiver_email: send_request.email.clone(),
             balance: sender.balance,
             message: "Insufficient balance".to_string(),
-        });
+        }));
     }
 
     // Get receiver's ID and verify they exist
@@ -122,14 +143,19 @@ pub async fn send_transaction(
     {
         Ok(Some(user)) => user,
         Ok(None) => {
-            return HttpResponse::NotFound().json(SendTransactionResponse {
+            return json_response(ApiResponse::success(SendTransactionResponse {
                 amount: send_request.amount,
                 receiver_email: send_request.email.clone(),
                 balance: sender.balance,
                 message: "Receiver not found".to_string(),
-            })
+            }))
         }
-        Err(_) => return HttpResponse::InternalServerError().json("Database error"),
+        Err(_) => {
+            return json_response(ApiResponse::<MessageData>::error(
+                500,
+                "Database error".to_string(),
+            ))
+        }
     };
 
     // Update sender's balance
@@ -143,7 +169,10 @@ pub async fn send_transaction(
     {
         Ok(user) => user,
         Err(_) => {
-            return HttpResponse::InternalServerError().json("Failed to update sender balance")
+            return json_response(ApiResponse::<MessageData>::error(
+                500,
+                "Failed to update sender balance".to_string(),
+            ))
         }
     };
 
@@ -156,7 +185,10 @@ pub async fn send_transaction(
     .execute(&mut *tx)
     .await
     {
-        return HttpResponse::InternalServerError().json("Failed to update receiver balance");
+        return json_response(ApiResponse::<MessageData>::error(
+            500,
+            "Failed to update receiver balance".to_string(),
+        ));
     }
 
     // Create transaction records for both sender and receiver
@@ -176,18 +208,24 @@ pub async fn send_transaction(
     .execute(&mut *tx)
     .await
     {
-        return HttpResponse::InternalServerError().json("Failed to create transaction records");
+        return json_response(ApiResponse::<MessageData>::error(
+            500,
+            "Failed to create transaction records".to_string(),
+        ));
     }
 
     // Commit the transaction
     if let Err(_) = tx.commit().await {
-        return HttpResponse::InternalServerError().json("Failed to commit transaction");
+        return json_response(ApiResponse::<MessageData>::error(
+            500,
+            "Failed to commit transaction".to_string(),
+        ));
     }
 
-    HttpResponse::Ok().json(SendTransactionResponse {
+    json_response(ApiResponse::success(SendTransactionResponse {
         amount: send_request.amount,
         receiver_email: send_request.email.clone(),
         balance: updated_sender.balance,
         message: "Transaction successful".to_string(),
-    })
+    }))
 }
