@@ -3,6 +3,9 @@ FROM rust:1.82 as builder
 WORKDIR /usr/src/app
 COPY . .
 
+RUN cargo install sqlx-cli
+RUN sqlx database create
+RUN sqlx migrate run
 RUN cargo build --release
 
 FROM debian:bookworm-slim

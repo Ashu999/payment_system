@@ -1,13 +1,13 @@
 services:
   app:
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/payment_system
+      - JWT_SECRET_KEY=your-secret-key
     build: .
     ports:
       - "8080:8080"
     depends_on:
       - db
-    environment:
-      - DATABASE_URL=postgres://user:password@db:5432/payment_system
-      - JWT_SECRET_KEY=your-secret-key
     networks:
       - app-network
 

@@ -7,10 +7,13 @@ Also Checkout: [OpenAPI](./docs/openapi.yaml)
 
 Setup
 
-Local Setup:
+Dev Setup:
 ```shell
-docker-compose up --build db  <-- (run postgress in docker)
-sqlx migrate run <-- (apply mirgation)
+docker-compose up --build db    # run postgress in docker
 
-cargo run <-- (run payment_system locally)
+cargo install sqlx-cli          # install sqlx-cli
+sqlx database create            # create database at DATABASE_URL
+sqlx migrate run                # apply mirgation
+
+cargo run                       # run app locally 
 ```
