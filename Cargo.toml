@@ -28,5 +28,5 @@ actix-rt = "2.10.0"
 email_address = "0.2.9"
 
 [dev-dependencies]
-testcontainers = "0.23.1"
-tokio = { version = "1", features = ["full"] }
+# testcontainers = { version = "0.23.1", features = ["postgresql"] }
+# tokio = { version = "1", features = ["full"] }
