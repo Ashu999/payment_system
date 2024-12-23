@@ -1,6 +1,7 @@
 use crate::utils::auth::{self};
 use actix_web::{get, post, web, HttpResponse, Responder};
 use bcrypt::{hash, verify, DEFAULT_COST};
+use email_address::EmailAddress;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -27,6 +28,11 @@ pub async fn register(
     credentials: web::Json<UserCredentials>,
     pool: web::Data<sqlx::PgPool>,
 ) -> impl Responder {
+    // Validate email
+    if !EmailAddress::is_valid(&credentials.email) {
+        return HttpResponse::BadRequest().json("Invalid email");
+    }
+
     // Check if user exists
     let existing_user = sqlx::query!("SELECT id FROM users WHERE email = $1", credentials.email)
         .fetch_optional(&**pool)

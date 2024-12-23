@@ -1,5 +1,5 @@
 [package]
-name = "payment-system"
+name = "payment_system"
 version = "0.1.0"
 edition = "2021"
 
@@ -24,6 +24,9 @@ chrono = { version = "0.4", features = ["serde"] }
 env_logger = "0.11.6"
 actix-governor = "0.8.0"
 actix-web-httpauth = "0.8"
+actix-rt = "2.10.0"
+email_address = "0.2.9"
 
-# [dev-dependencies]
-# testcontainers = "0.23.1"
+[dev-dependencies]
+testcontainers = "0.23.1"
+tokio = { version = "1", features = ["full"] }

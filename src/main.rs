@@ -38,7 +38,7 @@ async fn main() -> std::io::Result<()> {
 
     // Configure rate limiting
     let governor_conf = GovernorConfigBuilder::default()
-        .seconds_per_request(1) // Allow 2 requests per second
+        .seconds_per_request(1) // Allow 1 requests per second
         .burst_size(5)
         .finish()
         .unwrap();
