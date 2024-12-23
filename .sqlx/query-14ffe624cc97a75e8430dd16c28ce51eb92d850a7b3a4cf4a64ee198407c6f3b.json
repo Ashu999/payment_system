@@ -1,0 +1,24 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        WITH updated_user AS (\n            UPDATE users \n            SET balance = balance + $1 \n            WHERE id = $2 \n            RETURNING balance\n        )\n        INSERT INTO transactions (id, user_id, transaction_type, amount, status)\n        VALUES ($3, $2, 'RECEIVED', $1, 'SUCCESS')\n        RETURNING (SELECT balance FROM updated_user)\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "balance",
+        "type_info": "Numeric"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Numeric",
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "14ffe624cc97a75e8430dd16c28ce51eb92d850a7b3a4cf4a64ee198407c6f3b"
+}

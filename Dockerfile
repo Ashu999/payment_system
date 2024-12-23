@@ -4,8 +4,7 @@ WORKDIR /usr/src/app
 COPY . .
 
 RUN cargo install sqlx-cli
-RUN sqlx database create
-RUN sqlx migrate run
+ENV SQLX_OFFLINE true
 RUN cargo build --release
 
 FROM debian:bookworm-slim

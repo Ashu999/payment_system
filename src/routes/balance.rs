@@ -2,6 +2,7 @@ use crate::utils::auth;
 use actix_web::{get, post, web, HttpResponse, Responder};
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
+use sqlx::types::Uuid;
 
 #[derive(Deserialize)]
 pub struct AddBalanceRequest {
