@@ -10,6 +10,11 @@ pub struct Claims {
     pub exp: usize,
 }
 
+#[derive(Serialize)]
+pub struct AuthData {
+    pub token: String,
+}
+
 pub fn create_token(user_id: Uuid) -> Result<String, jsonwebtoken::errors::Error> {
     let claims = Claims {
         sub: user_id,

@@ -1,5 +1,8 @@
-use crate::utils::auth::{self};
-use actix_web::{get, post, web, HttpResponse, Responder};
+use crate::utils::{
+    auth::{self, AuthData},
+    response::{json_response, ApiResponse, MessageData},
+};
+use actix_web::{get, post, web, Responder};
 use bcrypt::{hash, verify, DEFAULT_COST};
 use email_address::EmailAddress;
 use rust_decimal::Decimal;
@@ -13,12 +16,7 @@ pub struct UserCredentials {
 }
 
 #[derive(Serialize)]
-pub struct AuthResponse {
-    pub token: String,
-}
-
-#[derive(Serialize)]
-pub struct UserResponse {
+pub struct UserData {
     pub email: String,
     pub balance: Decimal,
 }
@@ -30,16 +28,21 @@ pub async fn register(
 ) -> impl Responder {
     // Validate email
     if !EmailAddress::is_valid(&credentials.email) {
-        return HttpResponse::BadRequest().json("Invalid email");
+        return json_response(ApiResponse::<MessageData>::error(
+            400,
+            "Invalid email".to_string(),
+        ));
     }
-
     // Check if user exists
     let existing_user = sqlx::query!("SELECT id FROM users WHERE email = $1", credentials.email)
         .fetch_optional(&**pool)
         .await;
 
     if let Ok(Some(_)) = existing_user {
-        return HttpResponse::Conflict().json("User already exists");
+        return json_response(ApiResponse::<MessageData>::error(
+            409,
+            "User already exists".to_string(),
+        ));
     }
 
     // Hash password
@@ -61,8 +64,13 @@ pub async fn register(
     .await;
 
     match result {
-        Ok(_) => HttpResponse::Ok().json("User created successfully"),
-        Err(_) => HttpResponse::InternalServerError().json("Failed to create user"),
+        Ok(_) => json_response(ApiResponse::success(MessageData {
+            message: "User created successfully".to_string(),
+        })),
+        Err(_) => json_response(ApiResponse::<MessageData>::error(
+            500,
+            "Failed to create user".to_string(),
+        )),
     }
 }
 
@@ -84,19 +92,24 @@ pub async fn login(
             // Verify password
             if verify(&credentials.password, &user.password_hash).unwrap_or(false) {
                 // Generate JWT
-                let token = match auth::create_token(user.id) {
-                    Ok(token) => token,
-                    Err(_) => {
-                        return HttpResponse::InternalServerError().json("Failed to create token")
-                    }
-                };
-
-                HttpResponse::Ok().json(AuthResponse { token })
+                match auth::create_token(user.id) {
+                    Ok(token) => json_response(ApiResponse::success(AuthData { token })),
+                    Err(_) => json_response(ApiResponse::<MessageData>::error(
+                        500,
+                        "Failed to create token".to_string(),
+                    )),
+                }
             } else {
-                HttpResponse::Unauthorized().json("Invalid credentials")
+                json_response(ApiResponse::<MessageData>::error(
+                    401,
+                    "Invalid credentials".to_string(),
+                ))
             }
         }
-        _ => HttpResponse::Unauthorized().json("Invalid credentials"),
+        _ => json_response(ApiResponse::<MessageData>::error(
+            401,
+            "Invalid credentials".to_string(),
+        )),
     }
 }
 
@@ -108,7 +121,7 @@ pub async fn get_user(
     // Verify token and get claims
     let claims = match auth::verify_request_token(&req) {
         Ok(claims) => claims,
-        Err(msg) => return HttpResponse::Unauthorized().json(msg),
+        Err(msg) => return json_response(ApiResponse::<MessageData>::error(401, msg.to_string())),
     };
 
     let user = sqlx::query!(
@@ -119,10 +132,13 @@ pub async fn get_user(
     .await;
 
     match user {
-        Ok(Some(user)) => HttpResponse::Ok().json(UserResponse {
+        Ok(Some(user)) => json_response(ApiResponse::success(UserData {
             email: user.email,
             balance: user.balance,
-        }),
-        _ => HttpResponse::NotFound().json("User not found"),
+        })),
+        _ => json_response(ApiResponse::<MessageData>::error(
+            404,
+            "User not found".to_string(),
+        )),
     }
 }
