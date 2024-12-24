@@ -9,6 +9,7 @@ cd payment_system
 
 docker-compose up --build db    # run postgress in docker
 
+cargo test                      # run tests
 cargo install sqlx-cli          # install sqlx-cli
 sqlx database create            # create database at DATABASE_URL
 sqlx migrate run                # apply mirgation
