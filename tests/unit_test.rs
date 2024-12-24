@@ -3,7 +3,7 @@ use payment_system::routes::user::register;
 use serde_json::json;
 use sqlx::{Executor, PgPool};
 use testcontainers::Docker;
-use testcontainers::{clients::Cli, images::postgres::Postgres}; // Adjust the import path
+use testcontainers::{clients::Cli, images::postgres::Postgres};
 
 #[actix_rt::test]
 async fn test_user_register() {
