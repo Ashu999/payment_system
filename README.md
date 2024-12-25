@@ -44,3 +44,5 @@ Also Checkout: [API Documentation](./docs/openapi.yaml)
 - Dockerization
 - async/await
 - security middleware
+- unit, integration testing 
+- CI/CD
