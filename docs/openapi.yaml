@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Money Transfer API
+  title: Payment System API
   description: API for managing user accounts, balances, and transactions
   version: 1.0.0
 
@@ -8,19 +8,43 @@ servers:
   - url: http://localhost:8080
     description: Local development server
 
+components:
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
 paths:
   /:
     get:
       summary: Health check
-      description: Check if the API is running
       responses:
         '200':
           description: API is running
           content:
             application/json:
               schema:
-                type: string
-                example: "OK"
+                $ref: '#/components/schemas/ApiResponse'
+              example:
+                success: true
+                data:
+                  message: "Welcome to the payment system API!"
 
   /user/register:
     post:
@@ -37,13 +61,18 @@ paths:
                   format: email
                 password:
                   type: string
-                  format: password
               required:
                 - email
                 - password
       responses:
         '200':
           description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Invalid email format
         '409':
           description: User already exists
         '500':
@@ -64,7 +93,6 @@ paths:
                   format: email
                 password:
                   type: string
-                  format: password
               required:
                 - email
                 - password
@@ -74,12 +102,15 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  token:
-                    type: string
+                $ref: '#/components/schemas/ApiResponse'
+              example:
+                success: true
+                data:
+                  token: "JWT_TOKEN"
         '401':
           description: Invalid credentials
+        '500':
+          description: Failed to create token
 
   /user:
     get:
@@ -88,17 +119,16 @@ paths:
         - bearerAuth: []
       responses:
         '200':
-          description: User information
+          description: User information retrieved
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  email:
-                    type: string
-                  balance:
-                    type: number
-                    format: decimal
+                $ref: '#/components/schemas/ApiResponse'
+              example:
+                success: true
+                data:
+                  email: "user@example.com"
+                  balance: "100.00"
         '401':
           description: Unauthorized
         '404':
@@ -111,15 +141,15 @@ paths:
         - bearerAuth: []
       responses:
         '200':
-          description: Current balance
+          description: Balance retrieved
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  balance:
-                    type: number
-                    format: decimal
+                $ref: '#/components/schemas/ApiResponse'
+              example:
+                success: true
+                data:
+                  balance: "100.00"
         '401':
           description: Unauthorized
         '404':
@@ -145,15 +175,15 @@ paths:
                 - amount
       responses:
         '200':
-          description: Balance updated
+          description: Amount added successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  balance:
-                    type: number
-                    format: decimal
+                $ref: '#/components/schemas/ApiResponse'
+              example:
+                success: true
+                data:
+                  balance: "150.00"
         '400':
           description: Amount must be positive
         '401':
@@ -168,26 +198,18 @@ paths:
         - bearerAuth: []
       responses:
         '200':
-          description: List of transactions
+          description: Transactions retrieved
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                      format: uuid
-                    transaction_type:
-                      type: string
-                      enum: [SENT, RECEIVED]
-                    amount:
-                      type: number
-                      format: decimal
-                    status:
-                      type: string
-                      enum: [SUCCESS, FAILURE]
+                $ref: '#/components/schemas/ApiResponse'
+              example:
+                success: true
+                data:
+                  - id: "123e4567-e89b-12d3-a456-426614174000"
+                    transaction_type: "SENT"
+                    amount: "50.00"
+                    status: "SUCCESS"
         '401':
           description: Unauthorized
         '500':
@@ -217,22 +239,18 @@ paths:
                 - email
       responses:
         '200':
-          description: Transaction successful
+          description: Transaction completed
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  amount:
-                    type: number
-                    format: decimal
-                  receiver_email:
-                    type: string
-                  balance:
-                    type: number
-                    format: decimal
-                  message:
-                    type: string
+                $ref: '#/components/schemas/ApiResponse'
+              example:
+                success: true
+                data:
+                  amount: "50.00"
+                  receiver_email: "receiver@example.com"
+                  balance: "50.00"
+                  message: "Transaction successful"
         '400':
           description: Invalid amount or insufficient balance
         '401':
@@ -241,10 +259,3 @@ paths:
           description: Receiver not found
         '500':
           description: Transaction failed
-
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
