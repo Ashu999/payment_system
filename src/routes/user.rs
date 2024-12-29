@@ -46,8 +46,15 @@ pub async fn register(
     }
 
     // Hash password
-    let password_hash = hash(credentials.password.as_bytes(), DEFAULT_COST)
-        .unwrap_or_else(|_| panic!("Failed to hash password"));
+    let password_hash = match hash(credentials.password.as_bytes(), DEFAULT_COST) {
+        Ok(hash) => hash,
+        Err(_) => {
+            return json_response(ApiResponse::<MessageData>::error(
+                500,
+                "Internal server error".to_string(),
+            ));
+        }
+    };
 
     let balance = Decimal::new(0, 0);
 
