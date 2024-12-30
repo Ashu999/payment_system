@@ -7,7 +7,6 @@ use payment_system::routes::{
     user::{get_user, login, register},
 };
 use serde_json::json;
-use sqlx::Executor;
 use sqlx::PgPool;
 use testcontainers::Docker;
 use testcontainers::{clients::Cli, images::postgres::Postgres};
@@ -27,28 +26,8 @@ async fn test_complete_payment_flow() {
     // Setup database pool
     let pool = PgPool::connect(&db_url).await.unwrap();
 
-    // Create required tables
-    pool.execute(
-        "CREATE TYPE transaction_type AS ENUM ('SENT', 'RECEIVED');
-         CREATE TYPE transaction_status AS ENUM ('SUCCESS', 'FAILURE');
-         CREATE TABLE users (
-            id UUID PRIMARY KEY,
-            email VARCHAR(255) NOT NULL UNIQUE,
-            password_hash VARCHAR(255) NOT NULL,
-            balance DECIMAL(19,2) NOT NULL,
-            updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-         );
-         CREATE TABLE transactions (
-            id UUID PRIMARY KEY,
-            user_id UUID NOT NULL REFERENCES users(id),
-            transaction_type transaction_type NOT NULL,
-            amount DECIMAL(19,2) NOT NULL,
-            status transaction_status NOT NULL,
-            created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-         );",
-    )
-    .await
-    .unwrap();
+    //migrate database
+    sqlx::migrate!("./migrations").run(&pool).await.unwrap();
 
     // Setup test app
     let app = test::init_service(
