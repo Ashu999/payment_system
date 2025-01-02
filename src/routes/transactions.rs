@@ -81,12 +81,10 @@ pub async fn send_transaction(
 
     // Validate amount is positive
     if send_request.amount <= Decimal::new(0, 0) {
-        return json_response(ApiResponse::success(SendTransactionResponse {
-            amount: send_request.amount,
-            receiver_email: send_request.email.clone(),
-            balance: Decimal::new(0, 0),
-            message: "Amount must be positive".to_string(),
-        }));
+        return json_response(ApiResponse::<MessageData>::error(
+            400,
+            "Amount must be positive".to_string(),
+        ));
     }
 
     // Start a transaction
@@ -125,12 +123,10 @@ pub async fn send_transaction(
 
     // Check if sender has sufficient balance
     if sender.balance < send_request.amount {
-        return json_response(ApiResponse::success(SendTransactionResponse {
-            amount: send_request.amount,
-            receiver_email: send_request.email.clone(),
-            balance: sender.balance,
-            message: "Insufficient balance".to_string(),
-        }));
+        return json_response(ApiResponse::<MessageData>::error(
+            400,
+            "Insufficient balance".to_string(),
+        ));
     }
 
     // Get receiver's ID and verify they exist
@@ -143,12 +139,10 @@ pub async fn send_transaction(
     {
         Ok(Some(user)) => user,
         Ok(None) => {
-            return json_response(ApiResponse::success(SendTransactionResponse {
-                amount: send_request.amount,
-                receiver_email: send_request.email.clone(),
-                balance: sender.balance,
-                message: "Receiver not found".to_string(),
-            }))
+            return json_response(ApiResponse::<MessageData>::error(
+                404,
+                "Receiver not found".to_string(),
+            ))
         }
         Err(_) => {
             return json_response(ApiResponse::<MessageData>::error(
