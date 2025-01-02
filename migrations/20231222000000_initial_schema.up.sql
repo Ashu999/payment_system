@@ -23,3 +23,25 @@ CREATE TABLE transactions (
 );
 
 CREATE INDEX idx_transactions_user_id ON transactions(user_id);
+
+-- Add notification function for transactions
+CREATE OR REPLACE FUNCTION notify_transaction_insert()
+RETURNS trigger AS $$
+BEGIN
+    PERFORM pg_notify(
+        'transaction_insert',
+        json_build_object(
+            'transaction_id', NEW.id,
+            'status', NEW.status,
+            'amount', NEW.amount
+        )::text
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger for transaction inserts
+CREATE TRIGGER transaction_insert_trigger
+    AFTER INSERT ON transactions
+    FOR EACH ROW
+    EXECUTE FUNCTION notify_transaction_insert();

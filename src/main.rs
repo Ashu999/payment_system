@@ -1,8 +1,10 @@
 use actix_governor::{Governor, GovernorConfigBuilder};
+use actix_rt::spawn;
 use actix_web::{middleware, web, App, HttpServer};
 use env_logger::Env;
 use routes::balance::{add_amount, get_balance};
 use routes::health::health;
+use routes::merchant::{listen_to_notifications, webhook_listener};
 use routes::transactions::{get_transactions, send_transaction};
 use routes::user::{get_user, login, register};
 use sqlx::postgres::PgPoolOptions;
@@ -32,6 +34,10 @@ async fn main() -> std::io::Result<()> {
         .await
         .expect("Failed to migrate the database");
 
+    spawn(async move {
+        listen_to_notifications().await;
+    });
+
     // Configure rate limiting
     let governor_conf = GovernorConfigBuilder::default()
         .seconds_per_request(1) // Allow 1 requests per second
@@ -57,6 +63,7 @@ async fn main() -> std::io::Result<()> {
             .service(add_amount)
             .service(get_transactions)
             .service(send_transaction)
+            .service(webhook_listener)
     })
     .bind(("0.0.0.0", 8080))?
     .run()
