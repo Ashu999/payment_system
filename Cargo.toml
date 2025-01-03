@@ -27,6 +27,7 @@ actix-web-httpauth = "0.8"
 actix-rt = "2.10.0"
 email_address = "0.2.9"
 awc = "3.5.1"
+rdkafka = { version = "0.37.0", features = ["cmake-build"] }
 
 
 [dev-dependencies]

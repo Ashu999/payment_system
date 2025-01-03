@@ -1,6 +1,6 @@
 # Payments Server
 
-Technologies Used: Rust, Actix, PostgreSQL, Sqlx, JWT, Docker  
+Technologies Used: Rust, Actix, PostgreSQL, Sqlx, JWT, Docker, Kafka
 
 ## Dev Setup:
 ```shell
@@ -46,3 +46,5 @@ Also Checkout: [API Documentation](./docs/openapi.yaml)
 - security middleware
 - unit, integration testing 
 - CI/CD
+- Postgress notification
+- Webhook implementation

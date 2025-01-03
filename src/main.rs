@@ -1,10 +1,12 @@
 use actix_governor::{Governor, GovernorConfigBuilder};
-use actix_rt::spawn;
 use actix_web::{middleware, web, App, HttpServer};
 use env_logger::Env;
+use rdkafka::admin::{AdminClient, AdminOptions, NewTopic, TopicReplication};
+use rdkafka::client::DefaultClientContext;
+use rdkafka::ClientConfig;
 use routes::balance::{add_amount, get_balance};
 use routes::health::health;
-use routes::merchant::{listen_to_notifications, webhook_listener};
+use routes::merchant::{listen_to_notifications, process_webhooks, webhook_listener};
 use routes::transactions::{get_transactions, send_transaction};
 use routes::user::{get_user, login, register};
 use sqlx::postgres::PgPoolOptions;
@@ -12,6 +14,29 @@ use std::env;
 
 mod routes;
 mod utils;
+
+// Create Kafka topic
+async fn create_kafka_topic() {
+    let kafka_bootstrap_servers =
+        env::var("KAFKA_BOOTSTRAP_SERVERS").expect("KAFKA_BOOTSTRAP_SERVERS must be set");
+    let kafka_topic = env::var("KAFKA_WEBHOOK_TOPIC").expect("KAFKA_WEBHOOK_TOPIC must be set");
+
+    let admin_client: AdminClient<DefaultClientContext> = ClientConfig::new()
+        .set("bootstrap.servers", &kafka_bootstrap_servers)
+        .create()
+        .expect("Failed to create Kafka admin client");
+
+    let topic = NewTopic::new(
+        &kafka_topic,
+        1,                          // num_partitions
+        TopicReplication::Fixed(1), // replication_factor
+    );
+
+    admin_client
+        .create_topics(&[topic], &AdminOptions::new())
+        .await
+        .expect("Failed to create Kafka topic");
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -34,8 +59,21 @@ async fn main() -> std::io::Result<()> {
         .await
         .expect("Failed to migrate the database");
 
-    spawn(async move {
-        listen_to_notifications().await;
+    // Create Kafka topic
+    create_kafka_topic().await;
+
+    //seprate worker, db transection Insert tracking and kafka producer
+    std::thread::spawn(|| {
+        actix_rt::System::new().block_on(async {
+            listen_to_notifications().await;
+        });
+    });
+
+    //seprate worker, kafka consumer and webhook processor
+    std::thread::spawn(|| {
+        actix_rt::System::new().block_on(async {
+            process_webhooks().await;
+        });
     });
 
     // Configure rate limiting

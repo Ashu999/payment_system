@@ -1,5 +1,13 @@
 FROM rust:1.82 as builder
 
+# Install build dependencies including cmake
+RUN apt-get update && \
+    apt-get install -y \
+    cmake \
+    pkg-config \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /usr/src/app
 COPY . .
 
@@ -9,7 +17,11 @@ RUN cargo build --release
 
 FROM debian:bookworm-slim
 
-RUN apt-get update && apt-get install -y libpq5 ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y \
+    libpq5 \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /usr/src/app/target/release/payment_system /usr/local/bin/app
 COPY --from=builder /usr/src/app/migrations /usr/local/bin/migrations
